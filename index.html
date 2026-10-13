@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Сказочная викторина</title>
+<style>
+:root{--s1:#7fcdff;--s2:#e6f7ff;--hill1:#8fd06a;--hill2:#6fbf4f;--sun:1;--moon:0;--card:rgba(255,255,255,.93);--ink:#3a2a1a;--accent:#ff8a3d;--ok:#4caf50;--bad:#ef5350;--soft:#ffe3b0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--s1:#1b1f4a;--s2:#4a3f7a;--hill1:#2f6b4a;--hill2:#245a3d;--sun:0;--moon:1;--card:rgba(58,47,66,.93);--ink:#fff1dc;--soft:#4b3d55}}
+:root[data-theme="dark"]{--s1:#1b1f4a;--s2:#4a3f7a;--hill1:#2f6b4a;--hill2:#245a3d;--sun:0;--moon:1;--card:rgba(58,47,66,.93);--ink:#fff1dc;--soft:#4b3d55}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,var(--s1),var(--s2) 65%) fixed;color:var(--ink);font-family:"Comic Sans MS","Trebuchet MS",Arial,sans-serif;display:flex;justify-content:center}
+main{position:relative;z-index:1;width:100%;max-width:640px;padding:16px;text-align:center}
+.card{background:var(--card);border-radius:28px;padding:20px;box-shadow:0 6px 0 rgba(0,0,0,.12)}
+h1{font-size:2rem;margin:.2em 0}
+.big{font-size:4.5rem;line-height:1.1}
+.tales{font-size:2.2rem;margin:10px 0;letter-spacing:6px}
+button{font-family:inherit;color:inherit;cursor:pointer;border:0}
+.go{background:var(--accent);color:#fff;font-size:1.6rem;padding:14px 36px;border-radius:40px;box-shadow:0 5px 0 rgba(0,0,0,.2);margin-top:12px}
+.go:active{transform:translateY(3px)}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:1.1rem;margin-bottom:10px}
+.bar{height:12px;background:var(--soft);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
+.badge{display:inline-block;background:var(--soft);border-radius:20px;padding:6px 16px;font-size:1.1rem}
+.q{font-size:1.6rem;margin:14px 0;line-height:1.3}
+.say{background:var(--soft);font-size:1.6rem;border-radius:50%;width:56px;height:56px}
+.opts{display:grid;gap:12px;margin-top:14px}
+.opt{background:var(--soft);border-radius:22px;padding:14px;font-size:1.5rem;display:flex;align-items:center;gap:14px;text-align:left;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.opt span{font-size:3.4rem}
+.opt.ok{background:var(--ok);color:#fff}
+.opt.bad{background:var(--bad);color:#fff;animation:sh .4s}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.msg{min-height:2.2rem;font-size:1.5rem;margin-top:12px}
+.stars{font-size:2.4rem;margin:8px 0;word-break:break-all}
+.hide{display:none}
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.bg .h1,.bg .h2{position:absolute;border-radius:50%}
+.bg .h1{bottom:-22vh;left:-15%;width:80%;height:40vh;background:var(--hill1)}
+.bg .h2{bottom:-26vh;right:-20%;width:90%;height:42vh;background:var(--hill2)}
+.bg i{position:absolute;font-style:normal;font-size:3rem}
+.sun{top:4%;right:6%;opacity:var(--sun);animation:sp 20s linear infinite}
+.moon{top:4%;right:6%;opacity:var(--moon)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.c{animation:dr 40s linear infinite;opacity:.9}
+@keyframes dr{from{transform:translateX(-25vw)}to{transform:translateX(125vw)}}
+.fl{bottom:2%;font-size:2rem!important;animation:bo 3s ease-in-out infinite}
+.bf{animation:fly 14s ease-in-out infinite alternate}
+@keyframes fly{from{transform:translate(0,0)}to{transform:translate(40vw,-10vh)}}
+.vrow{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.vrow select{font-family:inherit;font-size:.95rem;max-width:180px;border-radius:14px;padding:5px;background:var(--soft);color:var(--ink);border:0}
+.opt.hl{outline:5px solid var(--accent)}
+.scene{font-size:3rem;background:var(--soft);border-radius:22px;padding:8px;margin:8px 0;letter-spacing:4px;animation:bo 2.5s ease-in-out infinite}
+@keyframes bo{50%{transform:translateY(-6px)}}
+.lv{display:block;width:100%;margin:10px 0;background:var(--soft);border-radius:24px;padding:14px;font-size:1.4rem;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.lv small{display:block;font-size:1rem;opacity:.8}
+.tog{background:var(--soft);border-radius:20px;padding:6px 14px;font-size:1rem}
+.row{display:flex;gap:10px;justify-content:center;align-items:center}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><i class="sun">☀️</i><i class="moon">🌙</i><i class="c" style="top:10%;left:0">☁️</i><i class="c" style="top:22%;left:0;animation-delay:-18s;font-size:2.2rem">☁️</i><i class="bf" style="top:55%;left:8%">🦋</i><i class="bf" style="top:65%;left:60%;animation-delay:-6s">🐝</i><div class="h1"></div><div class="h2"></div><i class="fl" style="left:5%">🌷</i><i class="fl" style="left:25%;animation-delay:-1s">🌼</i><i class="fl" style="left:48%;animation-delay:-2s">🌸</i><i class="fl" style="left:70%;animation-delay:-.5s">🌻</i><i class="fl" style="left:90%;animation-delay:-1.5s">🍄</i></div>
+<main>
+ <div id="start" class="card">
+  <div class="big">📖</div>
+  <h1>Сказочная викторина</h1>
+  <div class="tales">🍞 🦢 🐻 🌱 🐔</div>
+  <p style="font-size:1.3rem">Колобок, Гуси-лебеди, Маша и Медведи, Репка, Курочка Ряба.<br>Будь внимательным — вопросы хитрые!</p>
+  <p style="font-size:1.2rem;margin:6px 0">Выбери уровень:</p>
+  <button class="lv" onclick="startGame(1)">🐣 Малыши <small>2 картинки, простые вопросы · 3–4 года</small></button>
+  <button class="lv" onclick="startGame(2)">🐥 Средний <small>3 картинки · 5 лет</small></button>
+  <button class="lv" onclick="startGame(3)">🦉 Хитрый <small>вопросы с подвохом · 6–7 лет</small></button>
+ </div>
+ <div id="game" class="card hide">
+  <div class="top"><span id="cnt"></span><button class="tog" id="vt" onclick="toggleVoice()">🔊 Голос: вкл</button><span id="stars">⭐ 0</span></div>
+  <div class="vrow"><select id="cs" onchange="setChar()" aria-label="Кто читает"></select><select id="vs" onchange="setVoice()" aria-label="Голос"></select><button class="tog" id="sp" onclick="toggleSpeed()">🐢 Медленно</button></div>
+  <div class="bar"><i id="fill"></i></div>
+  <div class="badge" id="tale"></div>
+  <div class="scene" id="scene"></div>
+  <div class="q" id="q"></div>
+  <button class="say" onclick="speak()" aria-label="Прочитать вопрос">🔊</button>
+  <div class="opts" id="opts"></div>
+  <div class="msg" id="msg"></div>
+ </div>
+ <div id="end" class="card hide">
+  <div class="big" id="endEmoji">🏆</div>
+  <h1 id="endTitle"></h1>
+  <div class="stars" id="endStars"></div>
+  <p id="endText" style="font-size:1.3rem"></p>
+  <button class="go" onclick="startGame(lvl)">Ещё раз 🔄</button>
+  <button class="go" style="background:var(--soft);color:var(--ink)" onclick="menu()">Другой уровень</button>
+ </div>
+</main>
+<script>
+var T={"Колобок":["🍞","👵🍞🌲🦊"],"Гуси-лебеди":["🦢","🦢🏠🔥🍎🌊"],"Маша и Медведи":["🐻","👧🏡🐻🐻‍❄️🧸"],"Репка":["🌱","👴🌱👵👧🐶🐱🐭"],"Курочка Ряба":["🐔","🐔🥇🐭"]};
+var L={
+1:[["Колобок","Кого испекла бабушка?",[["🍞","Колобка"],["🥕","Морковку"]],0],
+["Колобок","Кто съел Колобка?",[["🦊","Лиса"],["🐘","Слон"]],0],
+["Гуси-лебеди","Кто унёс братика?",[["🐟","Рыбки"],["🦢","Гуси-лебеди"]],1],
+["Гуси-лебеди","Кто помог девочке спрятаться?",[["🐊","Крокодил"],["🔥","Печка"]],1],
+["Маша и Медведи","Кто жил в лесном домике?",[["🐧","Пингвины"],["🐻","Медведи"]],1],
+["Маша и Медведи","Какая кроватка понравилась Маше?",[["🧸","Маленькая"],["🏰","Огромная, как дом"]],0],
+["Репка","Что посадил дедушка?",[["🍌","Банан"],["🌱","Репку"]],1],
+["Репка","Кто тянул репку последним?",[["🐘","Слон"],["🐭","Мышка"]],1],
+["Курочка Ряба","Кто снёс яичко?",[["🐔","Курочка"],["🐴","Лошадь"]],0],
+["Курочка Ряба","Какое яичко сначала снесла Ряба?",[["🟢","Зелёное"],["🥇","Золотое"]],1]],
+2:[["Колобок","Кого Колобок встретил самым первым?",[["🐺","Волка"],["🐰","Зайца"],["🐻","Медведя"]],1],
+["Колобок","Кого Колобок встретил самым последним?",[["🦊","Лису"],["🐺","Волка"],["🐰","Зайца"]],0],
+["Гуси-лебеди","К кому гуси-лебеди унесли братика?",[["🧙‍♀️","К Бабе-Яге"],["🐺","К волку"],["🦊","К лисе"]],0],
+["Гуси-лебеди","Кто угостил девочку пирожком?",[["🔥","Печка"],["🍎","Яблонька"],["🌊","Речка"]],0],
+["Маша и Медведи","Что ела Маша в домике?",[["🥣","Кашу"],["🍕","Пиццу"],["🍦","Мороженое"]],0],
+["Маша и Медведи","Чей стульчик сломала Маша?",[["🐻","Папы-медведя"],["🐻‍❄️","Мамы-медведицы"],["🧸","Мишутки"]],2],
+["Репка","Кого позвал дед на помощь первой?",[["👵","Бабку"],["🐭","Мышку"],["🐶","Жучку"]],0],
+["Репка","Кто пришёл на помощь после Жучки?",[["🐱","Кошка"],["👧","Внучка"],["🐭","Мышка"]],0],
+["Курочка Ряба","Кто разбил яичко?",[["🐱","Кошка"],["🐭","Мышка"],["🦊","Лиса"]],1],
+["Курочка Ряба","Что делали дед и баба с яичком?",[["🍳","Жарили"],["🎁","Дарили"],["🔨","Били"]],2]],
+3:[["Колобок","Кого Колобок НЕ встретил в лесу?",[["🐺","Волка"],["🐊","Крокодила"],["🐻","Медведя"]],1],
+["Колобок","Кто в конце съел Колобка, хотя он пел ей песенку?",[["🐺","Волк"],["🦊","Лиса"],["🐰","Заяц"]],1],
+["Колобок","От кого Колобок НЕ смог убежать?",[["👵","От бабушки"],["🐰","От зайца"],["🦊","От лисы"]],2],
+["Гуси-лебеди","Кто НЕ помог девочке спрятаться от гусей?",[["🔥","Печка"],["🐻","Медведь"],["🍎","Яблонька"]],1],
+["Гуси-лебеди","Кто унёс братика: утки или гуси-лебеди?",[["🦆","Утки"],["🦢","Гуси-лебеди"],["🦅","Орлы"]],1],
+["Гуси-лебеди","Где стояла избушка Бабы-Яги?",[["🏰","В замке"],["🐔","На курьих ножках"],["☁️","На облаке"]],1],
+["Маша и Медведи","Сколько медведей жило в домике? Посчитай хорошенько!",[["2️⃣","Два"],["3️⃣","Три"],["4️⃣","Четыре"]],1],
+["Маша и Медведи","Какая кроватка понравилась Маше в самый раз?",[["🛏️","Самая большая"],["🛌","Средняя"],["🧸","Самая маленькая"]],2],
+["Маша и Медведи","Как Маша убежала, когда медведи вернулись?",[["🪟","Через окно"],["🚪","Через дверь"],["🏠","Через крышу"]],0],
+["Репка","Кто стоял в очереди прямо ПЕРЕД Кошкой?",[["👧","Внучка"],["🐶","Жучка"],["🐭","Мышка"]],1],
+["Репка","Кто посадил репку самым первым?",[["👴","Дедушка"],["👵","Бабушка"],["🐭","Мышка"]],0],
+["Репка","Сколько всего героев тянули репку, вместе с дедом?",[["4️⃣","Четверо"],["6️⃣","Шестеро"],["7️⃣","Семеро"]],1],
+["Курочка Ряба","Какое яичко снесла Курочка Ряба?",[["🥇","Золотое"],["🟢","Зелёное"],["🍫","Шоколадное"]],0],
+["Курочка Ряба","Кто разбил золотое яичко? Не дед и не баба!",[["🐭","Мышка"],["🦊","Лиса"],["🐱","Кошка"]],0],
+["Курочка Ряба","Какое яичко пообещала снести Ряба?",[["🥇","Золотое"],["🥚","Простое"],["💎","Бриллиантовое"]],1]]};
+var Q,lvl=1,i,score,tries,locked,voice=true,curQ;
+function $(id){return document.getElementById(id)}
+function shuffle(a){a=a.slice();for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=a[k];a[k]=a[j];a[j]=t}return a}
+function tone(f,d){try{var c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.15,c.currentTime);o.start();o.stop(c.currentTime+d)}catch(e){}}
+var CH=[['🌷 Сказочница',1.08,.92],['👧 Малышка',1.4,.95],['🧚 Фея',1.6,1],['👦 Мальчик',1.2,.95],['🐻 Мишка',.7,.85]],cIdx=0,VC=[],vIdx=0,rate=.85,optEls=[];
+function score(v){var n=v.name.toLowerCase(),p=0;if(/natural|neural|online/.test(n))p+=8;if(/google/.test(n))p+=4;if(/svetlana|dariya|milena|alena|katya|irina|tatyana|anna|elena|polina/.test(n))p+=4;if(/yuri|pavel|maxim|dmitry/.test(n))p-=2;return p}
+function loadVoices(){try{VC=speechSynthesis.getVoices().filter(function(x){return x.lang&&x.lang.toLowerCase().indexOf("ru")==0});VC.sort(function(a,b){return score(b)-score(a)});var sel=$("vs");sel.innerHTML="";VC.forEach(function(v,n){var o=document.createElement("option");o.value=n;o.textContent="🎙 "+v.name.replace(/Microsoft |Google /,"");sel.appendChild(o)});if(!VC.length)sel.style.display="none";else{sel.style.display="";sel.value=vIdx=Math.min(vIdx,VC.length-1)}}catch(e){}}
+function initChars(){var c=$("cs");CH.forEach(function(x,n){var o=document.createElement("option");o.value=n;o.textContent=x[0];c.appendChild(o)})}
+function setChar(){cIdx=+$("cs").value;readQ()}
+function setVoice(){vIdx=+$("vs").value;readQ()}
+function toggleSpeed(){rate=rate<.9?1:.85;$("sp").textContent=rate<.9?"🐢 Медленно":"🐇 Быстрее";readQ()}
+function say(t,after,cb){if(!voice)return;try{var u=new SpeechSynthesisUtterance(t);u.lang="ru-RU";u.rate=rate*CH[cIdx][2];u.pitch=CH[cIdx][1];u.volume=1;if(VC[vIdx])u.voice=VC[vIdx];if(cb)u.onstart=cb;speechSynthesis.speak(u)}catch(e){}}
+function stopSpeech(){try{speechSynthesis.cancel()}catch(e){}optEls.forEach(function(x){x[0].classList.remove("hl")})}
+function readQ(){if(!voice||!curQ)return;stopSpeech();say(curQ[1]);optEls.forEach(function(x,n){say(["Первый","Второй","Третий"][n]+" вариант. "+x[1],0,function(){optEls.forEach(function(y){y[0].classList.remove("hl")});x[0].classList.add("hl")})});say(" ",0,function(){optEls.forEach(function(y){y[0].classList.remove("hl")})})}
+function speak(){var v=voice;voice=true;readQ();voice=v}
+function toggleVoice(){voice=!voice;$("vt").textContent=voice?"🔊 Голос: вкл":"🔇 Голос: выкл";if(voice)readQ();else stopSpeech()}
+function sayNow(t){if(!voice)return;stopSpeech();say(t)}
+function menu(){$("end").classList.add("hide");$("game").classList.add("hide");$("start").classList.remove("hide")}
+function startGame(n){stopSpeech();lvl=n;i=0;score=0;Q=shuffle(L[n]);$("start").classList.add("hide");$("end").classList.add("hide");$("game").classList.remove("hide");show()}
+function show(){
+ curQ=Q[i];tries=0;locked=false;var t=T[curQ[0]];
+ $("cnt").textContent=(i+1)+" / "+Q.length;
+ $("fill").style.width=(i/Q.length*100)+"%";
+ $("stars").textContent="⭐ "+score;
+ $("tale").textContent=t[0]+" "+curQ[0];
+ $("scene").textContent=t[1];
+ $("q").textContent=curQ[1];$("msg").textContent="";
+ var box=$("opts");box.innerHTML="";optEls=[];
+ shuffle(curQ[2].map(function(o,n){return{e:o[0],t:o[1],r:n===curQ[3]}})).forEach(function(o){
+  var b=document.createElement("button");b.className="opt";
+  b.innerHTML="<span>"+o.e+"</span>"+o.t;
+  b.onclick=function(){pick(b,o.r)};box.appendChild(b);optEls.push([b,o.t])});
+ setTimeout(readQ,400);
+}
+function pick(b,right){
+ if(locked||b.classList.contains("bad"))return;
+ if(right){
+  locked=true;b.classList.add("ok");tone(660,.15);setTimeout(function(){tone(880,.25)},150);
+  if(tries===0)score++;
+  $("stars").textContent="⭐ "+score;
+  var m=tries===0?"Молодец! Правильно!":"Верно! Ты справился!";
+  $("msg").textContent="🎉 "+m;sayNow(m);
+  setTimeout(function(){i++;i<Q.length?show():finish()},2000);
+ }else{
+  tries++;b.classList.add("bad");tone(200,.3);var m="Подумай ещё, попробуй другой ответ!";$("msg").textContent="🤔 "+m;sayNow(m);
+ }
+}
+function finish(){
+ $("game").classList.add("hide");$("end").classList.remove("hide");
+ var s="";for(var k=0;k<score;k++)s+="⭐";
+ $("endStars").textContent=s||"🌱";
+ var good=score>=Q.length*0.8,mid=score>=Q.length/2;
+ var ti=good?"Ты знаток сказок!":(mid?"Хорошо получилось!":"Давай попробуем ещё!");
+ $("endEmoji").textContent=good?"🏆":(mid?"🎈":"🌈");
+ $("endTitle").textContent=ti;
+ $("endText").textContent="Звёздочек с первого раза: "+score+" из "+Q.length;
+ sayNow(ti+" У тебя "+score+" звёздочек из "+Q.length);
+ tone(523,.2);setTimeout(function(){tone(659,.2)},200);setTimeout(function(){tone(784,.4)},400);
+}
+initChars();loadVoices();try{speechSynthesis.onvoiceschanged=loadVoices}catch(e){}
+</script>
+</body>
+</html>
